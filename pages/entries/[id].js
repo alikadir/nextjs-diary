@@ -5,9 +5,9 @@ export default props => {
   return (
     <>
       <Head>
-        <title>Sample Page</title>
+        <title>Sample Pagexxxxx</title>
       </Head>
-      <div>sample id: {props.url.query.id}</div>
+      <div>sample id: {props.url?.query?.id}</div>
     </>
   );
 };
