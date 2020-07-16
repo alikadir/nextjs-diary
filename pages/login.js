@@ -1,31 +1,35 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
-import useSWR from 'swr';
+import { getUser, login } from '../operations/userOperation';
+import { useRouter } from 'next/router';
 
 export default props => {
   const userNameRef = useRef();
   const passwordRef = useRef();
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const redirect = () => {
+    router.push(props.url?.query?.path || '/');
+  };
 
-  useSWR(``, url => fetch(url).then(data => data.json()));
+  useEffect(() => {
+    if (getUser()) {
+      redirect();
+    }
+  }, []);
 
   const onSubmit = e => {
     e.preventDefault();
     const username = userNameRef.current.value;
     const password = passwordRef.current.value;
-
-    fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    })
-      .then(data => data.json())
-      .then(data => {
-        alert(data.token);
+    setLoading(true);
+    login(username, password)
+      .then(() => {
+        redirect();
       })
-      .catch(err => {
-        alert(err);
+      .catch(console.error)
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -40,7 +44,9 @@ export default props => {
           <br />
           <input ref={passwordRef} type="password" placeholder="Password" />
           <br />
-          <button type="submit">Login</button>
+          <button type="submit" disabled={loading}>
+            Login
+          </button>
         </form>
       </div>
     </>
