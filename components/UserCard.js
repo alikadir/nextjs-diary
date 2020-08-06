@@ -12,7 +12,8 @@ export default props => {
   return (
     user && (
       <p>
-        Welcome: {user.username}{' '}
+        Welcome: {user.username}
+        {'  '}
         <button
           onClick={() => {
             logout();
